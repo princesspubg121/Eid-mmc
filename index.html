@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proud Students Campaign 2026</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+p {
+  font-size: 18px;
+}
+
+canvas {
+  border: 3px solid white;
+  margin-top: 20px;
+  max-width: 90%;
+  border-radius: 10px;
+}
+
+input, button {
+  margin-top: 15px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #ff9800;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e68900;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎉 Proud Students Campaign 2026</h1>
+<p>Upload your photo and join the campaign!</p>
+
+<input type="file" id="upload" accept="image/*"><br>
+
+<canvas id="canvas" width="500" height="500"></canvas><br>
+
+<button onclick="downloadImage()">📥 Download Image</button>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const frame = new Image();
+frame.src = "https://i.ibb.co/7QpKsCX/twibbon-frame.png";
+
+document.getElementById("upload").addEventListener("change", function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(event) {
+    const img = new Image();
+    img.onload = function() {
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const ratio = Math.max(canvas.width / img.width, canvas.height / img.height);
+      const newWidth = img.width * ratio;
+      const newHeight = img.height * ratio;
+      const x = (canvas.width - newWidth) / 2;
+      const y = (canvas.height - newHeight) / 2;
+
+      ctx.drawImage(img, x, y, newWidth, newHeight);
+      ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+    }
+    img.src = event.target.result;
+  }
+
+  reader.readAsDataURL(file);
+});
+
+function downloadImage() {
+  const link = document.createElement("a");
+  link.download = "campaign.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+</script>
+
+</body>
+</html>
