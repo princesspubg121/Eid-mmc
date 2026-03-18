@@ -1,10 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eid Campaign Twibbon</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  background: linear-gradient(135deg, #0f2027, #2c5364);
+  color: white;
+}
+
+h1 {
+  margin-top: 20px;
+}
+
+canvas {
+  border: 3px solid white;
+  margin-top: 20px;
+  max-width: 90%;
+  border-radius: 10px;
+}
+
+input, button {
+  margin-top: 15px;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  background: #ff9800;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e68900;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌙 Eid Campaign Twibbon</h1>
+<p>Upload your photo, adjust, and download!</p>
+
+<input type="file" id="upload" accept="image/*">
+
+<canvas id="canvas" width="1000" height="1000"></canvas>
+
+<br>
+<button onclick="downloadImage()">📥 Download</button>
+
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 
 let img = new Image();
 let frame = new Image();
-frame.src = "20260316_225133.png";
+frame.src = "frame.png"; // আপনার frame
 
 let scale = 1;
 let posX = 0;
@@ -14,6 +72,8 @@ let startX, startY;
 
 document.getElementById("upload").addEventListener("change", function(e) {
   const file = e.target.files[0];
+  if (!file) return;
+
   const reader = new FileReader();
 
   reader.onload = function(event) {
@@ -26,6 +86,7 @@ document.getElementById("upload").addEventListener("change", function(e) {
     }
     img.src = event.target.result;
   }
+
   reader.readAsDataURL(file);
 });
 
@@ -39,6 +100,7 @@ function draw() {
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 }
 
+// PC drag
 canvas.addEventListener("mousedown", (e) => {
   isDragging = true;
   startX = e.offsetX - posX;
@@ -56,7 +118,26 @@ canvas.addEventListener("mousemove", (e) => {
 canvas.addEventListener("mouseup", () => isDragging = false);
 canvas.addEventListener("mouseleave", () => isDragging = false);
 
-// Zoom (mobile + PC)
+// Mobile drag
+canvas.addEventListener("touchstart", (e) => {
+  isDragging = true;
+  const touch = e.touches[0];
+  startX = touch.clientX - posX;
+  startY = touch.clientY - posY;
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  if (isDragging) {
+    const touch = e.touches[0];
+    posX = touch.clientX - startX;
+    posY = touch.clientY - startY;
+    draw();
+  }
+});
+
+canvas.addEventListener("touchend", () => isDragging = false);
+
+// Zoom
 canvas.addEventListener("wheel", (e) => {
   e.preventDefault();
   scale += e.deltaY * -0.001;
@@ -71,3 +152,6 @@ function downloadImage() {
   link.click();
 }
 </script>
+
+</body>
+</html>
